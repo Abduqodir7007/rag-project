@@ -6,6 +6,8 @@ class Settings(BaseSettings):
 
     APP_ENV: str = "development"
     PRIMARY_MODEL: str = "gemini-2.5-flash"
+    FALLBACK_MODEL: str = "gemini-2.5-flash"
+    MODEL_TEMPERATURE: float = 0
     GEMINI_API_KEY: str
     LANGCHAIN_API_KEY: str
     LANGCHAIN_TRACING_V2: bool = False

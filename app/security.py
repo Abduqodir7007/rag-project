@@ -27,8 +27,8 @@ class InputSanitizer:
         r"disable\s+safety",
         r"remove\s+guardrails",
     ]
-    
-    def __init__(self, query: str):
+
+    def __init__(self):
         self.patterns = [re.compile(pattern, re.IGNORECASE) for pattern in self.INJECTION_PATTERNS]
 
     def check_for_injection(self, query: str) -> tuple[bool, Optional[str]]:
@@ -106,3 +106,30 @@ class OutputValidator:
                 break
 
         return response, warnings
+
+
+class SecurityManager:
+    def __init__(self):
+        self.pii_detector = PIIDetector()
+        self.input_sanitizer = InputSanitizer()
+        self.output_validator = OutputValidator()
+
+    @traceable(name="validate_query")
+    def validate_query(self, query: str) -> tuple[bool, Optional[str], list[str | None]]:
+        notes = []
+        injection_detected, injection_warning = self.input_sanitizer.check_for_injection(query)
+        if injection_detected:
+            return False, None, [injection_warning]
+
+        cleaned_query = self.input_sanitizer.clean_input(query)
+        pii_found = self.pii_detector.detect_pii(cleaned_query)
+        if pii_found:
+            cleaned_query = self.pii_detector.clean_input(cleaned_query)
+            notes.append(f"PII detected in query: {', '.join(pii_found.keys())}")
+
+        return True, cleaned_query, notes
+
+    @traceable(name="validate_response")
+    def validate_response(self, response: str) -> tuple[str, list[str]]:
+        cleaned_response, warnings = self.output_validator.clean_output(response)
+        return cleaned_response, warnings
