@@ -15,7 +15,7 @@ class CharRequest(BaseModel):
     thread_id: str = Field(default="default", description="The thread id of the conversation")
 
 
-class CharResponse(BaseModel):
+class ChatResponse(BaseModel):
     id: int
     response: str = Field(..., description="The response of the agent to user")
     thread_id: str = Field(default="default", description="The thread id of the conversation")

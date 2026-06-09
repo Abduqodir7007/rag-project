@@ -128,6 +128,6 @@ class Agent:
         )
         return {
             "response": response["messages"][-1].content if response.get("messages") else None,
-            "model_used": response.get("model"),
+            "model_used": response.get("model", "unknown"),
             "error": response.get("error"),
         }

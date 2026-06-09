@@ -115,11 +115,11 @@ class SecurityManager:
         self.output_validator = OutputValidator()
 
     @traceable(name="validate_query")
-    def validate_query(self, query: str) -> tuple[bool, Optional[str], list[str | None]]:
+    def validate_query(self, query: str) -> tuple[bool, str, list[str | None]]:
         notes = []
         injection_detected, injection_warning = self.input_sanitizer.check_for_injection(query)
         if injection_detected:
-            return False, None, [injection_warning]
+            return False, "", [injection_warning]
 
         cleaned_query = self.input_sanitizer.clean_input(query)
         pii_found = self.pii_detector.detect_pii(cleaned_query)

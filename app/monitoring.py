@@ -50,6 +50,7 @@ class MetricsTracker:
             self._cache_hits += 1
         else:
             self._cache_misses += 1
+        # implement token counting logic here, for simplicity we use word count as a proxy for tokens
         self._token_inputs += len(query.split())
         self._token_outputs += len(response.split())
 
